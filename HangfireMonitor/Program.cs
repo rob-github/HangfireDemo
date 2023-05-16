@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Console;
 using Hangfire.MemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHangfire(config =>
 {
     config.UseMemoryStorage();
+    config.UseConsole();
 });
 
 builder.Services.AddHangfireServer(config =>
@@ -38,5 +40,5 @@ app.UseHangfireDashboard();
 
 BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0}.", DateTime.Now.ToString("F")), TimeSpan.FromMinutes(2));
 BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0}.", DateTime.Now.ToString("F")));
-RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("It is now {0}", DateTime.Now.ToString("t")), Cron.Minutely);
+RecurringJob.AddOrUpdate("RecurringJob", () => TimeReporter.TellTheTime(null), Cron.Minutely);
 app.Run();

@@ -14,7 +14,6 @@ builder.Services.AddHangfireServer(config =>
     config.ServerName = Environment.MachineName;
 });
 
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,5 +38,5 @@ app.UseHangfireDashboard();
 
 BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0}.", DateTime.Now.ToString("F")), TimeSpan.FromMinutes(2));
 BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0}.", DateTime.Now.ToString("F")));
-
+RecurringJob.AddOrUpdate("RecurringJob", () => Console.WriteLine("It is now {0}", DateTime.Now.ToString("t")), Cron.Minutely);
 app.Run();

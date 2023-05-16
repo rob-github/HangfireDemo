@@ -37,6 +37,7 @@ app.MapControllers();
 
 app.UseHangfireDashboard();
 
-BackgroundJob.Enqueue(() => File.WriteAllText(@"D:\temp\2023\test.txt", DateTime.Now.ToString("F")));
+BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0}.", DateTime.Now.ToString("F")), TimeSpan.FromMinutes(2));
+BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0}.", DateTime.Now.ToString("F")));
 
 app.Run();

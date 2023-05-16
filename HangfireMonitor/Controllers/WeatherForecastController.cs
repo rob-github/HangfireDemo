@@ -1,3 +1,6 @@
+using Hangfire;
+using Hangfire.Console;
+using Hangfire.Server;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HangfireMonitor.Controllers
@@ -28,6 +31,30 @@ namespace HangfireMonitor.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("/log", Name = "LogWeatherForecast")]
+        public IEnumerable<WeatherForecast> Log()
+        {
+            var forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
+
+            BackgroundJob.Enqueue(() => WriteForecastsToConsole(forecasts, null));
+
+            return forecasts;
+        }
+
+        public static void WriteForecastsToConsole(WeatherForecast[] forecasts, PerformContext context)
+        {
+            foreach(var forecast in forecasts)
+            {
+                context.WriteLine("{0}: {2} ({1}C)", forecast.Date, forecast.TemperatureC, forecast.Summary);
+            }
         }
     }
 }

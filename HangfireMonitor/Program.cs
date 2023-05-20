@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.MemoryStorage;
+using HangfireMonitor.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddHangfireServer(config =>
 {
     config.ServerName = Environment.MachineName;
 });
+
+builder.Services.AddHangfireJobs<ListFolderContentsJob>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -41,4 +44,8 @@ app.UseHangfireDashboard();
 BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0}.", DateTime.Now.ToString("F")), TimeSpan.FromMinutes(2));
 BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0}.", DateTime.Now.ToString("F")));
 RecurringJob.AddOrUpdate("RecurringJob", () => TimeReporter.TellTheTime(null), Cron.Minutely);
+
+app.Services.RegisterRecurringJobs();
+
 app.Run();
+

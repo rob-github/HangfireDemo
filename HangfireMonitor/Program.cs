@@ -41,8 +41,8 @@ app.MapControllers();
 
 app.UseHangfireDashboard();
 
-BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0}.", DateTime.Now.ToString("F")), TimeSpan.FromMinutes(2));
-BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0}.", DateTime.Now.ToString("F")));
+BackgroundJob.Schedule(() => Console.WriteLine("Delayed 'Hello World!', from Hangfire at {0:F}.", DateTime.Now), TimeSpan.FromMinutes(2));
+BackgroundJob.Enqueue(() => Console.WriteLine("Hello World, from Hangfire at {0:F}.", DateTime.Now));
 RecurringJob.AddOrUpdate("RecurringJob", () => TimeReporter.TellTheTime(null), Cron.Minutely);
 
 app.Services.RegisterRecurringJobs();
